@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd"><!-- namespace：命名空间，用于隔离sql，还有一个很重要的作用，后面会讲 -->
+<mapper namespace="com.qf.mapper.OrderMapper">
+    <resultMap id="order_orderDetail" type="order" autoMapping="true">
+        <id property="id" column="id"></id>
+        <association property="user" column="uid" select="com.qf.mapper.UserMapper.findById"></association>
+        <collection property="list" column="id"  select="findDetailByOid" ofType="orderDetail"></collection>
+    </resultMap>
+    <resultMap id="orderdetail_goods" type="orderDetail" autoMapping="true">
+        <id property="id" column="id"></id>
+        <association property="goods" column="pid" select="com.qf.mapper.GoodsMapper.getGoodsById"></association>
+    </resultMap>
+    <insert id="addorder" parameterType="order">
+    insert into tb_order values(#{id},
+    #{uid},#{money},#{status},
+    #{time},#{aid})
+  </insert>
+    <insert id="addOrderDetail" parameterType="orderDetail">
+        insert into tb_orderdetail(oid,pid,num,money) values(#{oid},#{pid},#{num},#{money})
+    </insert>
+    <select id="findAllOrder" resultMap="order_orderDetail">
+       select * from tb_order where uid=#{uid}
+</select>
+    <select id="findDetailByOid" resultMap="orderdetail_goods">
+    select * from tb_orderdetail where oid=#{oid}
+    </select>
+    <select id="findOrderByOid" resultMap="order_orderDetail">
+        select * from tb_order where id=#{oid}
+    </select>
+    <update id="update">
+        update tb_order set status=#{status} where id=#{id}
+    </update>
+</mapper>

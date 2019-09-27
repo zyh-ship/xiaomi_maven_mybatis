@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd"><!-- namespace：命名空间，用于隔离sql，还有一个很重要的作用，后面会讲 -->
+<mapper namespace="com.qf.mapper.CartMapper">
+    <resultMap id="cart_goods" type="cart" autoMapping="true">
+        <id property="id" column="id"></id>
+        <association property="user" javaType="user" autoMapping="true">
+            <id property="id" column="id"></id>
+        </association>
+        <association property="goods" javaType="goods" autoMapping="true">
+        <id property="id" column="pid"></id>
+        </association>
+    </resultMap>
+    <insert id="AddCart" parameterType="cart">
+      insert into tb_cart values(#{user.id},#{goods.id},#{num},#{money})
+    </insert>
+    <select id="fingById" resultMap="cart_goods">
+        select c.*,g.id as gid,g.name,g.pubdate,g.price,g.picture,g.star,g.intro,g.typeid from tb_cart c,tb_goods g where c.pid=g.id and c.id= #{param1} and c.pid=#{param2}
+    </select>
+    <update id="update" parameterType="cart">
+       update tb_cart set num=#{num},money=#{money} where id=#{user.id} and pid=#{goods.id}
+    </update>
+    <delete id="delete">
+        delete  from tb_cart where id =#{param1} and pid=#{param2}
+    </delete>
+    <select id="findCartsById" resultMap="cart_goods">
+        select * from tb_cart c,tb_goods g where c.pid=g.id and c.id=#{id}
+    </select>
+    <delete id="clearCart">
+        delete from tb_cart where id=#{uid}
+    </delete>
+</mapper>
